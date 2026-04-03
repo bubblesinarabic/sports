@@ -701,6 +701,20 @@
       } 
       else { document.getElementById('audio-tryagain').play(); alert("الرجاء إدخال اسمك أولاً"); }
     }
+    <script>
+  // Listen for the login signal from the Weebly parent page
+  window.addEventListener('message', (event) => {
+    if (event.data.type === 'LOGIN_SUCCESS') {
+      console.log("Sports game received login for: " + event.data.user);
+      
+      // Update the button text inside the game to show the user's name
+      const gameLoginBtn = document.getElementById('authBtnTextLib');
+      if (gameLoginBtn) {
+        gameLoginBtn.textContent = "مرحباً " + event.data.user.split('@')[0];
+      }
+    }
+  });
+</script>
   </script>
 </body>
 </html>
