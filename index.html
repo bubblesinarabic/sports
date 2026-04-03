@@ -711,6 +711,7 @@
     const auth = getAuth(app);
     const googleProvider = new GoogleAuthProvider();
     let isLoginMode = true;
+    let isUnlockedByParent = false; // The new smart memory flag
 
     const authBtn = document.getElementById('authBtnLib');
     const authBtnText = document.getElementById('authBtnTextLib');
@@ -731,6 +732,7 @@
       authBtnText.textContent = "خروج (" + email.split('@')[0] + ")";
       lockScreen.style.display = 'none';
       gameContainer.style.display = 'flex';
+      isUnlockedByParent = true;
     }
 
     // Function to hide the game
@@ -738,9 +740,26 @@
       authBtnText.textContent = "دخول";
       lockScreen.style.display = 'block';
       gameContainer.style.display = 'none';
+      isUnlockedByParent = false;
     }
 
-    authBtn.addEventListener('click', () => auth.currentUser ? signOut(auth) : authModal.classList.add('open'));
+    // Listen for cross-domain login signal FIRST
+    window.addEventListener('message', (event) => {
+      if (event.data.type === 'LOGIN_SUCCESS') {
+        unlockGame(event.data.user);
+      }
+    });
+
+    // Handle logout or show modal
+    authBtn.addEventListener('click', () => {
+      if (auth.currentUser || isUnlockedByParent) {
+        signOut(auth);
+        lockGame();
+      } else {
+        authModal.classList.add('open');
+      }
+    });
+
     closeAuth.addEventListener('click', () => authModal.classList.remove('open'));
     googleAuthBtn.addEventListener('click', () => signInWithPopup(auth, googleProvider).then(() => authModal.classList.remove('open')));
 
@@ -761,19 +780,16 @@
       }
     });
 
-    // Check if user is logged in natively on GitHub
+    // Delay the lock check so Weebly has time to send the unlock signal
     onAuthStateChanged(auth, (user) => {
       if (user) {
         unlockGame(user.email);
       } else {
-        lockGame();
-      }
-    });
-
-    // Cross-Domain Sync: Listen for login signal from the Weebly parent site
-    window.addEventListener('message', (event) => {
-      if (event.data.type === 'LOGIN_SUCCESS') {
-        unlockGame(event.data.user);
+        setTimeout(() => {
+          if (!isUnlockedByParent) {
+            lockGame();
+          }
+        }, 1000); // Waits 1 second before locking
       }
     });
   </script>
