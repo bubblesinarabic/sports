@@ -711,7 +711,7 @@
     const auth = getAuth(app);
     const googleProvider = new GoogleAuthProvider();
     let isLoginMode = true;
-    let isUnlockedByParent = false; // The new smart memory flag
+    let isUnlockedByParent = false; 
 
     const authBtn = document.getElementById('authBtnLib');
     const authBtnText = document.getElementById('authBtnTextLib');
@@ -727,7 +727,6 @@
     const lockScreen = document.getElementById('lock-screen');
     const gameContainer = document.getElementById('game-container');
 
-    // Function to show the game
     function unlockGame(email) {
       authBtnText.textContent = "خروج (" + email.split('@')[0] + ")";
       lockScreen.style.display = 'none';
@@ -735,7 +734,6 @@
       isUnlockedByParent = true;
     }
 
-    // Function to hide the game
     function lockGame() {
       authBtnText.textContent = "دخول";
       lockScreen.style.display = 'block';
@@ -743,14 +741,24 @@
       isUnlockedByParent = false;
     }
 
-    // Listen for cross-domain login signal FIRST
+    // Listen for Weebly's answer
     window.addEventListener('message', (event) => {
-      if (event.data.type === 'LOGIN_SUCCESS') {
+      if (event.data && event.data.type === 'LOGIN_SUCCESS') {
         unlockGame(event.data.user);
       }
     });
 
-    // Handle logout or show modal
+    // MISSING CODE: Actively ask Weebly if the user is logged in
+    let checkCount = 0;
+    let authCheckInterval = setInterval(() => {
+        if (isUnlockedByParent || auth.currentUser || checkCount > 5) {
+            clearInterval(authCheckInterval);
+        } else {
+            window.parent.postMessage({ type: 'REQUEST_LOGIN_STATUS' }, '*');
+            checkCount++;
+        }
+    }, 1000);
+
     authBtn.addEventListener('click', () => {
       if (auth.currentUser || isUnlockedByParent) {
         signOut(auth);
@@ -780,16 +788,16 @@
       }
     });
 
-    // Delay the lock check so Weebly has time to send the unlock signal
     onAuthStateChanged(auth, (user) => {
       if (user) {
         unlockGame(user.email);
       } else {
+        // Increased delay to 2 seconds to let the ping happen
         setTimeout(() => {
           if (!isUnlockedByParent) {
             lockGame();
           }
-        }, 1000); // Waits 1 second before locking
+        }, 2000); 
       }
     });
   </script>
