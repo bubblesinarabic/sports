@@ -28,8 +28,8 @@
       background: radial-gradient(circle at 50% 0%, #1e3a8a 0%, #0f172a 60%, #064e3b 100%);
       background-attachment: fixed;
       display: flex;
-      flex-direction: column; /* Added to stack header and game */
-      align-items: center;    /* Added to center horizontally */
+      flex-direction: column; 
+      align-items: center;    
       min-height: 100vh;
       overflow-x: hidden;
     }
@@ -55,11 +55,25 @@
     .divider:not(:empty)::after { margin-right: .5em; }
 
     /* ========================================= */
+    /* LOCK SCREEN STYLES                        */
+    /* ========================================= */
+    #lock-screen {
+      background: rgba(255,255,255,0.95);
+      border-radius: 20px;
+      padding: 50px 30px;
+      text-align: center;
+      max-width: 600px;
+      width: 100%;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+      margin-top: 40px;
+    }
+
+    /* ========================================= */
     /* GAME STYLES                               */
     /* ========================================= */
     .lms-container {
       width: 100%; max-width: 1000px; background: var(--card-bg); border-radius: 20px; box-shadow: 0 15px 40px rgba(0,0,0,0.5);
-      overflow: hidden; display: flex; flex-direction: column; position: relative; z-index: 10; border: 5px solid white;
+      overflow: hidden; display: none; /* HIDDEN BY DEFAULT */ flex-direction: column; position: relative; z-index: 10; border: 5px solid white;
     }
 
     .header-container { background-image: url("https://raw.githubusercontent.com/bubblesinarabic/sports/main/background.png"); background-size: cover; background-position: center; padding: 60px 20px 30px; text-align: center; position: relative; color: white; border-bottom: 5px solid var(--accent); }
@@ -225,7 +239,13 @@
     </div>
   </div>
 
-  <div class="lms-container">
+  <div id="lock-screen">
+    <i data-lucide="lock" style="width: 80px; height: 80px; color: #EF4444; margin-bottom: 15px;"></i>
+    <h2 style="color: #1F2937; margin: 0 0 15px 0;">المحتوى مقفل</h2>
+    <p style="font-size: 20px; color: #6B7280; font-weight: bold;">الرجاء تسجيل الدخول للبدء باللعب.</p>
+  </div>
+
+  <div class="lms-container" id="game-container">
     <div class="header-container">
       <div class="score-board"><i data-lucide="star" fill="#FDE047" color="#FDE047"></i> <span id="global-score">0</span> نقطة</div>
       <h1>أنواع الرياضة</h1>
@@ -440,7 +460,6 @@
       document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
       document.getElementById('slide-' + n).classList.add('active');
       lucide.createIcons();
-      // إيقاف نص القراءة إذا خرجنا من الشريحة
       if(n !== '1' && n !== 1) {
           stopPassage();
       }
@@ -448,38 +467,13 @@
 
     const githubBaseUrl = 'https://raw.githubusercontent.com/bubblesinarabic/sports/main';
 
-    /* البيانات مع تحديث صورة كرة السلة بصورة Unsplash مباشرة وفعالة */
     const sportsData = [
-      { 
-        name: 'كرة القدم', prefix: 'كرة', spellPart: 'القدم', trans: '(Kurat Al-Qadam)', simpleDef: 'أَلْعَبُ بِالقَدَم.', 
-        img: `${githubBaseUrl}/soccer.png`, video: `${githubBaseUrl}/soccer.mov`, 
-        unsplashImg: 'https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=300&q=80&fit=crop'
-      },
-      { 
-        name: 'كرة السلة', prefix: 'كرة', spellPart: 'السلة', trans: '(Kurat As-Salla)', simpleDef: 'أَرْمِي فِي السَّلَّة.', 
-        img: `${githubBaseUrl}/basketball.png`, video: `${githubBaseUrl}/basketball.mov`,
-        unsplashImg: 'https://images.unsplash.com/photo-1546519638-68e109498ffc?w=300&q=80&fit=crop' // تم التحديث لرابط موثوق
-      },
-      { 
-        name: 'التِّنس', prefix: '', spellPart: 'التنس', trans: '(At-Tennis)', simpleDef: 'مَضْرِبٌ وَكُرَة.', 
-        img: `${githubBaseUrl}/tennis.png`, video: `${githubBaseUrl}/al-tennis.mov`,
-        unsplashImg: 'https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?w=300&q=80&fit=crop'
-      },
-      { 
-        name: 'الكُرَةُ الطَّائِرَة', prefix: 'الكرة', spellPart: 'الطائرة', trans: '(Al-Kurat At-Ta\'ira)', simpleDef: 'أَلْعَبُ بِاليَد.', 
-        img: `${githubBaseUrl}/volleyball.png`, video: `${githubBaseUrl}/al-volleyball.mov`,
-        unsplashImg: 'https://images.unsplash.com/photo-1612872087720-bb876e2e67d1?w=300&q=80&fit=crop'
-      },
-      { 
-        name: 'رُكُوبُ الدراجة', prefix: 'ركوب', spellPart: 'الدراجة', trans: '(Rukub Ad-Darraja)', simpleDef: 'دَرَّاجَةٌ سَرِيعَة.', 
-        img: `${githubBaseUrl}/cycling.png`, video: `${githubBaseUrl}/al-cycling.mov`,
-        unsplashImg: 'https://images.unsplash.com/photo-1517649763962-0c623066013b?w=300&q=80&fit=crop'
-      },
-      { 
-        name: 'السِّبَاحَة', prefix: '', spellPart: 'السباحة', trans: '(As-Sibaha)', simpleDef: 'مَاءٌ وَمِسْبَح.', 
-        img: `${githubBaseUrl}/swimming.png`, video: `${githubBaseUrl}/al-swimming.mov`,
-        unsplashImg: 'https://images.unsplash.com/photo-1530549387789-4c1017266635?w=300&q=80&fit=crop'
-      }
+      { name: 'كرة القدم', prefix: 'كرة', spellPart: 'القدم', trans: '(Kurat Al-Qadam)', simpleDef: 'أَلْعَبُ بِالقَدَم.', img: `${githubBaseUrl}/soccer.png`, video: `${githubBaseUrl}/soccer.mov`, unsplashImg: 'https://images.unsplash.com/photo-1579952363873-27f3bade9f55?w=300&q=80&fit=crop' },
+      { name: 'كرة السلة', prefix: 'كرة', spellPart: 'السلة', trans: '(Kurat As-Salla)', simpleDef: 'أَرْمِي فِي السَّلَّة.', img: `${githubBaseUrl}/basketball.png`, video: `${githubBaseUrl}/basketball.mov`, unsplashImg: 'https://images.unsplash.com/photo-1546519638-68e109498ffc?w=300&q=80&fit=crop' },
+      { name: 'التِّنس', prefix: '', spellPart: 'التنس', trans: '(At-Tennis)', simpleDef: 'مَضْرِبٌ وَكُرَة.', img: `${githubBaseUrl}/tennis.png`, video: `${githubBaseUrl}/al-tennis.mov`, unsplashImg: 'https://images.unsplash.com/photo-1595435934249-5df7ed86e1c0?w=300&q=80&fit=crop' },
+      { name: 'الكُرَةُ الطَّائِرَة', prefix: 'الكرة', spellPart: 'الطائرة', trans: '(Al-Kurat At-Ta\'ira)', simpleDef: 'أَلْعَبُ بِاليَد.', img: `${githubBaseUrl}/volleyball.png`, video: `${githubBaseUrl}/al-volleyball.mov`, unsplashImg: 'https://images.unsplash.com/photo-1612872087720-bb876e2e67d1?w=300&q=80&fit=crop' },
+      { name: 'رُكُوبُ الدراجة', prefix: 'ركوب', spellPart: 'الدراجة', trans: '(Rukub Ad-Darraja)', simpleDef: 'دَرَّاجَةٌ سَرِيعَة.', img: `${githubBaseUrl}/cycling.png`, video: `${githubBaseUrl}/al-cycling.mov`, unsplashImg: 'https://images.unsplash.com/photo-1517649763962-0c623066013b?w=300&q=80&fit=crop' },
+      { name: 'السِّبَاحَة', prefix: '', spellPart: 'السباحة', trans: '(As-Sibaha)', simpleDef: 'مَاءٌ وَمِسْبَح.', img: `${githubBaseUrl}/swimming.png`, video: `${githubBaseUrl}/al-swimming.mov`, unsplashImg: 'https://images.unsplash.com/photo-1530549387789-4c1017266635?w=300&q=80&fit=crop' }
     ];
 
     let currentAudioObj = null;
@@ -489,15 +483,12 @@
         currentAudioObj.play();
     }
 
-    /* مشغل الصوت الخاص بالنص القرائي باستخدام complete.mp3 */
     const passageAudio = new Audio(`${githubBaseUrl}/complete.mp3`);
-    
     function playPassage() { passageAudio.play(); }
     function pausePassage() { passageAudio.pause(); }
     function stopPassage() { passageAudio.pause(); passageAudio.currentTime = 0; }
     function changePassageSpeed(speed) { passageAudio.playbackRate = parseFloat(speed); }
 
-    /* الصندوق الجانبي */
     function showVocab(wordName) {
       const w = sportsData.find(item => item.name === wordName);
       if(w) {
@@ -512,7 +503,6 @@
       }
     }
 
-    /* البطاقات */
     let currentCard = 0;
     function loadCard() {
       const card = sportsData[currentCard];
@@ -533,21 +523,14 @@
     }
     loadCard();
 
-    /* التلوين والرسم الحر */
     let currentColor = '#EF4444'; 
     let activeTool = 'bucket'; 
-    
     function setPaintTool(tool) {
         activeTool = tool;
         document.getElementById('btn-bucket').classList.remove('active');
         document.getElementById('btn-brush').classList.remove('active');
         document.getElementById('btn-' + tool).classList.add('active');
-        
-        if(tool === 'brush') {
-            document.getElementById('draw-canvas').style.pointerEvents = 'auto';
-        } else {
-            document.getElementById('draw-canvas').style.pointerEvents = 'none';
-        }
+        document.getElementById('draw-canvas').style.pointerEvents = tool === 'brush' ? 'auto' : 'none';
     }
 
     function selectColor(el, color) {
@@ -557,9 +540,7 @@
     }
 
     function applyColor(element) {
-        if(activeTool === 'bucket') {
-            element.setAttribute('fill', currentColor);
-        }
+        if(activeTool === 'bucket') { element.setAttribute('fill', currentColor); }
     }
 
     const canvas = document.getElementById('draw-canvas');
@@ -567,10 +548,7 @@
     ctx.lineJoin = 'round'; ctx.lineCap = 'round'; ctx.lineWidth = 10;
     let isDrawing = false;
 
-    function startDrawPaint(e) {
-        if(activeTool !== 'brush') return;
-        isDrawing = true; drawPaint(e);
-    }
+    function startDrawPaint(e) { if(activeTool !== 'brush') return; isDrawing = true; drawPaint(e); }
     function endDrawPaint() { isDrawing = false; ctx.beginPath(); }
     function drawPaint(e) {
         if (!isDrawing) return;
@@ -578,7 +556,6 @@
         const rect = canvas.getBoundingClientRect();
         let x = e.clientX - rect.left; let y = e.clientY - rect.top;
         if (e.touches) { x = e.touches[0].clientX - rect.left; y = e.touches[0].clientY - rect.top; }
-        
         ctx.strokeStyle = currentColor; ctx.lineTo(x, y); ctx.stroke();
         ctx.beginPath(); ctx.moveTo(x, y);
     }
@@ -592,7 +569,6 @@
         ctx.clearRect(0, 0, canvas.width, canvas.height);
     }
 
-    /* الصورة التفاعلية */
     function renderHotspots() {
       const cont = document.getElementById('hotspot-wrapper');
       cont.innerHTML = `<img src="${githubBaseUrl}/hotspot.png" style="width:100%; border-radius:15px; display:block;">`;
@@ -613,27 +589,14 @@
       });
     }
 
-    /* التوصيل بالرسم (باستخدام صور Unsplash) */
     let drawState = { active: false, line: null, startDot: null, val: null };
-    
     function initLineMatch() {
-      const wordsCol = document.getElementById('match-words-col'); 
-      const imgsCol = document.getElementById('match-imgs-col');
+      const wordsCol = document.getElementById('match-words-col'); const imgsCol = document.getElementById('match-imgs-col');
       document.getElementById('match-svg').innerHTML = ''; 
-      
-      let words = [...sportsData].sort(() => 0.5 - Math.random()); 
-      let imgs = [...sportsData].sort(() => 0.5 - Math.random());
-      
+      let words = [...sportsData].sort(() => 0.5 - Math.random()); let imgs = [...sportsData].sort(() => 0.5 - Math.random());
       wordsCol.innerHTML = ''; imgsCol.innerHTML = '';
-      
-      words.forEach(w => {
-         wordsCol.innerHTML += `<div class="match-item-wrapper"><div class="match-box word-box">${w.name}</div><div class="match-dot" data-val="${w.name}" onmousedown="startDrawMatch(event, this)" ontouchstart="startDrawMatch(event, this)"></div></div>`;
-      });
-      
-      imgs.forEach(i => {
-         // استخدام صور Unsplash هنا
-         imgsCol.innerHTML += `<div class="match-item-wrapper left"><div class="match-dot target-dot" data-val="${i.name}"></div><div class="match-box img-box"><img src="${i.unsplashImg}" alt="${i.name}"></div></div>`;
-      });
+      words.forEach(w => { wordsCol.innerHTML += `<div class="match-item-wrapper"><div class="match-box word-box">${w.name}</div><div class="match-dot" data-val="${w.name}" onmousedown="startDrawMatch(event, this)" ontouchstart="startDrawMatch(event, this)"></div></div>`; });
+      imgs.forEach(i => { imgsCol.innerHTML += `<div class="match-item-wrapper left"><div class="match-dot target-dot" data-val="${i.name}"></div><div class="match-box img-box"><img src="${i.unsplashImg}" alt="${i.name}"></div></div>`; });
     }
 
     function getMatchCoords(e, container) {
@@ -645,19 +608,10 @@
 
     function startDrawMatch(e, dotEl) {
        if(dotEl.classList.contains('matched') || dotEl.classList.contains('wrong')) return;
-       
-       const container = document.getElementById('line-match-container'); 
-       const coords = getMatchCoords(e, container);
-       
-       const svg = document.getElementById('match-svg'); 
-       const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-       
-       line.setAttribute('x1', coords.x); line.setAttribute('y1', coords.y); 
-       line.setAttribute('x2', coords.x); line.setAttribute('y2', coords.y);
-       line.setAttribute('stroke', '#3B82F6'); 
-       line.setAttribute('stroke-width', '4'); 
-       line.setAttribute('stroke-linecap', 'round');
-       
+       const container = document.getElementById('line-match-container'); const coords = getMatchCoords(e, container);
+       const svg = document.getElementById('match-svg'); const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+       line.setAttribute('x1', coords.x); line.setAttribute('y1', coords.y); line.setAttribute('x2', coords.x); line.setAttribute('y2', coords.y);
+       line.setAttribute('stroke', '#3B82F6'); line.setAttribute('stroke-width', '4'); line.setAttribute('stroke-linecap', 'round');
        svg.appendChild(line);
        drawState = { active: true, line: line, startDot: dotEl, val: dotEl.getAttribute('data-val') };
     }
@@ -665,10 +619,8 @@
     function moveDrawMatch(e) {
        if(!drawState.active) return;
        e.preventDefault(); 
-       const container = document.getElementById('line-match-container'); 
-       const coords = getMatchCoords(e, container);
-       drawState.line.setAttribute('x2', coords.x); 
-       drawState.line.setAttribute('y2', coords.y);
+       const container = document.getElementById('line-match-container'); const coords = getMatchCoords(e, container);
+       drawState.line.setAttribute('x2', coords.x); drawState.line.setAttribute('y2', coords.y);
     }
 
     function endDrawMatch(e) {
@@ -681,45 +633,30 @@
        drawState.startDot.style.pointerEvents = 'auto';
 
        if(target && target.classList.contains('target-dot') && !target.classList.contains('matched') && !target.classList.contains('wrong')) {
-           
-           const cRect = document.getElementById('line-match-container').getBoundingClientRect(); 
-           const tRect = target.getBoundingClientRect();
-           drawState.line.setAttribute('x2', tRect.left + tRect.width/2 - cRect.left); 
-           drawState.line.setAttribute('y2', tRect.top + tRect.height/2 - cRect.top);
-
+           const cRect = document.getElementById('line-match-container').getBoundingClientRect(); const tRect = target.getBoundingClientRect();
+           drawState.line.setAttribute('x2', tRect.left + tRect.width/2 - cRect.left); drawState.line.setAttribute('y2', tRect.top + tRect.height/2 - cRect.top);
            if(target.getAttribute('data-val') === drawState.val) {
-               drawState.line.setAttribute('stroke', '#10B981'); 
-               target.classList.add('matched'); 
-               drawState.startDot.classList.add('matched');
-               document.getElementById('audio-welldone').play(); 
-               addScore(10);
+               drawState.line.setAttribute('stroke', '#10B981'); target.classList.add('matched'); drawState.startDot.classList.add('matched');
+               document.getElementById('audio-welldone').play(); addScore(10);
            } else { 
-               drawState.line.setAttribute('stroke', '#EF4444'); 
-               target.classList.add('wrong'); 
-               drawState.startDot.classList.add('wrong');
+               drawState.line.setAttribute('stroke', '#EF4444'); target.classList.add('wrong'); drawState.startDot.classList.add('wrong');
                document.getElementById('audio-tryagain').play(); 
            }
-       } else { 
-           drawState.line.remove(); 
-       }
+       } else { drawState.line.remove(); }
        drawState.active = false;
     }
     document.addEventListener('mousemove', moveDrawMatch); document.addEventListener('mouseup', endDrawMatch);
     document.addEventListener('touchmove', moveDrawMatch, {passive: false}); document.addEventListener('touchend', endDrawMatch);
 
-    /* ترتيب الحروف */
     let spellWord = '', spellArr = [], currentSpellObj = null;
     function loadSpell() {
       currentSpellObj = sportsData[Math.floor(Math.random() * sportsData.length)]; 
       spellWord = currentSpellObj.spellPart;
       document.getElementById('spell-img-hint').src = currentSpellObj.img;
-      
       const prefixEl = document.getElementById('spell-prefix');
       prefixEl.innerText = currentSpellObj.prefix ? currentSpellObj.prefix + ' ' : '';
-
       let slotsHtml = ''; for(let i=0; i<spellWord.length; i++) slotsHtml += `<div class="spell-slot" id="slot-${i}"></div>`;
       document.getElementById('spell-slots').innerHTML = slotsHtml;
-      
       let letters = spellWord.split('').sort(() => 0.5 - Math.random()); let lettersHtml = '';
       letters.forEach((l, i) => { lettersHtml += `<div class="spell-letter" id="let-${i}" onclick="moveLetter(this, '${l}')">${l}</div>`; });
       document.getElementById('spell-letters').innerHTML = lettersHtml; spellArr = [];
@@ -729,13 +666,10 @@
     }
     function clearSpell() { loadSpell(); }
     function submitSpell() {
-      if(spellArr.join('') === spellWord) { 
-          document.getElementById('audio-welldone').play(); addScore(10); setTimeout(loadSpell, 1500); 
-      } 
+      if(spellArr.join('') === spellWord) { document.getElementById('audio-welldone').play(); addScore(10); setTimeout(loadSpell, 1500); } 
       else { document.getElementById('audio-tryagain').play(); setTimeout(clearSpell, 1000); }
     }
 
-    /* أسئلة الفهم */
     const quizzes = [
       { q: "فِي أَيِّ رِيَاضَةٍ نَسْتَخْدِمُ الْمَضْرِبَ؟", opts: ["التِّنس", "كرة القدم", "السباحة"], ans: "التِّنس" },
       { q: "أَيْنَ نَلْعَبُ بِالْقَدَمِ وَنَرْكُلُ الْكُرَةَ؟", opts: ["كرة السلة", "كرة القدم", "رُكُوب الدراجة"], ans: "كرة القدم" },
@@ -749,21 +683,15 @@
     }
     function checkQuiz(btn, selected, correct) {
       if(btn.classList.contains('correct') || btn.classList.contains('wrong')) return; 
-      if(selected === correct) { 
-          btn.classList.add('correct'); document.getElementById('audio-welldone').play(); addScore(10); 
-      } 
+      if(selected === correct) { btn.classList.add('correct'); document.getElementById('audio-welldone').play(); addScore(10); } 
       else { btn.classList.add('wrong'); document.getElementById('audio-tryagain').play(); }
     }
     function nextQuiz() { currentQ = (currentQ + 1) % quizzes.length; loadQuiz(); }
     loadQuiz();
 
-    /* الشهادة */
     function genCert() {
       const name = document.getElementById('student-name').value;
-      if(name) { 
-          document.getElementById('display-name').innerText = name; 
-          document.getElementById('cert-score').innerText = totalScore; 
-      } 
+      if(name) { document.getElementById('display-name').innerText = name; document.getElementById('cert-score').innerText = totalScore; } 
       else { document.getElementById('audio-tryagain').play(); alert("الرجاء إدخال اسمك أولاً"); }
     }
   </script>
@@ -795,6 +723,23 @@
     const emailInput = document.getElementById('authEmailLib');
     const passwordInput = document.getElementById('authPasswordLib');
 
+    const lockScreen = document.getElementById('lock-screen');
+    const gameContainer = document.getElementById('game-container');
+
+    // Function to show the game
+    function unlockGame(email) {
+      authBtnText.textContent = "خروج (" + email.split('@')[0] + ")";
+      lockScreen.style.display = 'none';
+      gameContainer.style.display = 'flex';
+    }
+
+    // Function to hide the game
+    function lockGame() {
+      authBtnText.textContent = "دخول";
+      lockScreen.style.display = 'block';
+      gameContainer.style.display = 'none';
+    }
+
     authBtn.addEventListener('click', () => auth.currentUser ? signOut(auth) : authModal.classList.add('open'));
     closeAuth.addEventListener('click', () => authModal.classList.remove('open'));
     googleAuthBtn.addEventListener('click', () => signInWithPopup(auth, googleProvider).then(() => authModal.classList.remove('open')));
@@ -816,21 +761,19 @@
       }
     });
 
+    // Check if user is logged in natively on GitHub
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        authBtnText.textContent = "خروج (" + user.email.split('@')[0] + ")";
+        unlockGame(user.email);
       } else {
-        authBtnText.textContent = "دخول";
+        lockGame();
       }
     });
 
-    // Listener for login signal from a parent Weebly iframe (if embedded)
+    // Cross-Domain Sync: Listen for login signal from the Weebly parent site
     window.addEventListener('message', (event) => {
       if (event.data.type === 'LOGIN_SUCCESS') {
-        const gameLoginBtn = document.getElementById('authBtnTextLib');
-        if (gameLoginBtn) {
-          gameLoginBtn.textContent = "مرحباً " + event.data.user.split('@')[0];
-        }
+        unlockGame(event.data.user);
       }
     });
   </script>
